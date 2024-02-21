@@ -1,6 +1,11 @@
 import { S3 } from "aws-sdk";
 import fs from "fs";
 
+const accessKeyId = "";
+const secretAccessKey = "";
+const region = "";
+const bucket = "";
+
 const s3 = new S3({
   accessKeyId: accessKeyId,
   secretAccessKey: secretAccessKey,
