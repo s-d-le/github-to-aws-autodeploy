@@ -32,9 +32,9 @@ app.post("/deploy", async (req, res) => {
 
   console.log(`Deploying ${repoUrl} as ${id}`);
 
-  publisher.publish("build-queue", id);
-
   // send this to S3
+  publisher.lPush("build-queue", id);
+
   res.json({
     id: id,
   });
