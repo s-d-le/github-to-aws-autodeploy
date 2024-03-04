@@ -15,12 +15,30 @@ This project is inspired by Vercel deployment process. It downloads projects fro
 - When user access project-name.gtaad.app, it will request the built version of the code from S3 and return to the user
 - It also caches the built version of the code for faster access
 
+### The Queue
+
+- For each running process we left-push an `id` to the queue with `lpush` and the next process can query by `rpop` and run (first in first out)
+
 ## How to run
 
-Build upload-service
+Start redis server
+
+```
+redis-server
+```
+
+Build and run services
 
 ```
 npx tsc -b
+node dist/index.js
+```
+
+Redis CLI for queue information
+
+```
+redis-cli
+RPOP
 ```
 
 ## FAQs
@@ -29,3 +47,7 @@ npx tsc -b
   - Because deployment service is CPU intensive while upload is very simple. It's better to separate them to different services to scale them independently
 - Why do we need a queue between upload and deployment service?
   - The deployment service might be busy with other projects. We need asynchronously tell the deployment service when the code is ready for deployment. When the deployment service is free, it will take the `id` from the queue and start the deployment process
+
+## Future Developments
+
+- Moving from wm EC2 to serverless with Lambda
