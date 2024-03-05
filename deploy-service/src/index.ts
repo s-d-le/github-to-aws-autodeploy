@@ -1,11 +1,12 @@
 import { createClient, commandOptions } from "redis";
-import { downloadS3folder } from "./aws";
+import { downloadS3folder, copyFinalBuildToS3 } from "./aws";
+import { buildProject } from "./utils";
 const subscriber = createClient();
 subscriber.connect(); //localhost. Should be different on production
 
 async function main() {
   //infinite loop
-  while (1) {
+  while (true) {
     const response = await subscriber.brPop(
       //pop from right side
       commandOptions({ isolated: true }),
@@ -14,10 +15,13 @@ async function main() {
     );
     console.log(response);
     // @ts-ignore
-    const id = response?.element;
+    const id = response.element;
 
     await downloadS3folder(`output/${id}`);
     console.log("downloaded");
+    await buildProject(id);
+    console.log("build complete");
+    await copyFinalBuildToS3(id);
   }
 }
 main();

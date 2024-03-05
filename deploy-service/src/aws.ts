@@ -13,7 +13,7 @@ const s3 = new S3({
 export async function downloadS3folder(prefix: string) {
   const allFiles = await s3 //array contains all files
     .listObjectsV2({
-      Bucket: "github-to-aws",
+      Bucket: bucket,
       Prefix: prefix,
     })
     .promise();
@@ -54,3 +54,42 @@ export async function downloadS3folder(prefix: string) {
   // wait for all allPromises => [Promise, Promise] to be ready then return function
   await Promise.all(allPromises?.filter((x) => x !== undefined));
 }
+
+export function copyFinalBuildToS3(id: string) {
+  const folderPath = path.join(__dirname, `output/${id}/dist`); //get path to final build folder
+  const allFiles = getAllFiles(folderPath); //get all files from folder as array
+  allFiles.forEach((file) => {
+    //upload file to S3 recursively
+    uploadFile(`dist/${id}/` + file.slice(folderPath.length + 1), file);
+  });
+  console.log("final build uploaded");
+}
+
+// get all files from folder as array
+const getAllFiles = (folderPath: string) => {
+  let response: string[] = [];
+
+  const allFilesAndFolders = fs.readdirSync(folderPath);
+  allFilesAndFolders.forEach((file) => {
+    const fullFilePath = path.join(folderPath, file);
+    if (fs.statSync(fullFilePath).isDirectory()) {
+      response = response.concat(getAllFiles(fullFilePath));
+    } else {
+      response.push(fullFilePath);
+    }
+  });
+  return response;
+};
+
+// copy final build file to S3
+const uploadFile = async (fileName: string, localFilePath: string) => {
+  const fileContent = fs.readFileSync(localFilePath);
+  const response = await s3
+    .upload({
+      Body: fileContent,
+      Bucket: bucket,
+      Key: fileName,
+    })
+    .promise();
+  console.log(response);
+};

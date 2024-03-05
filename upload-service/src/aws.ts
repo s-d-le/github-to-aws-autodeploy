@@ -15,7 +15,7 @@ export const uploadFile = async (fileName: string, localFilePath: string) => {
   const response = await s3
     .upload({
       Body: fileContent,
-      Bucket: "github-to-aws",
+      Bucket: bucket,
       Key: fileName, // clean path without username
     })
     .promise();
