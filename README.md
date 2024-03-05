@@ -41,6 +41,15 @@ redis-cli
 RPOP
 ```
 
+Test deploy queue
+
+```
+cd deploy-service
+npm run dist/index.js
+redis-cli
+LPUSH build-queue 123 //should log 123
+```
+
 ## FAQs
 
 - Why upload and deployment service are separated?
