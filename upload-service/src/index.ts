@@ -11,6 +11,10 @@ import { createClient } from "redis";
 const publisher = createClient();
 publisher.connect();
 
+// for set
+const subscriber = createClient();
+subscriber.connect();
+
 const app = express();
 app.use(cors());
 app.use(express.json()); // for parsing application/json
@@ -40,6 +44,17 @@ app.post("/deploy", async (req, res) => {
   });
 
   // aws-sdk
+});
+
+// expose upload status for frontend
+app.get("/status", async (req, res) => {
+  // project id
+  const id = req.query.id;
+  // subscribe to redis for status
+  const response = await subscriber.hGet("status", id as string);
+  res.json({
+    status: response,
+  });
 });
 
 app.listen(3000, () => {

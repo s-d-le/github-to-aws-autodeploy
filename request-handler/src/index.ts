@@ -1,6 +1,11 @@
 import express from "express";
 import { S3 } from "aws-sdk";
 
+const accessKeyId = "";
+const secretAccessKey = "";
+const region = "";
+const bucket = "";
+
 const s3 = new S3({
   accessKeyId: accessKeyId,
   secretAccessKey: secretAccessKey,
@@ -22,8 +27,7 @@ app.get("/*", async (req, res) => {
   const contents = await s3
     .getObject({
       Bucket: bucket,
-      Key: "dist/rdj93/index.html",
-      // Key: `dist/${id}${filePath}`,
+      Key: `dist/${id}${filePath}`, //dist/1234/index.html
     })
     .promise();
 

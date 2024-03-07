@@ -51,6 +51,24 @@ redis-cli
 LPUSH build-queue 123 //should log 123
 ```
 
+## Deploy a project
+
+```
+run redis-server
+
+run upload-service
+use postman to send a POST request to localhost:3000/deploy with body { "repoUrl": "your-github-repo" }
+send a GET request to localhost:3000/status?id=id to check the status of the deployment
+
+run deploy-service
+it should get the id from redis queue start the deployment process
+
+you can set the localhost to something like id.yourdomain.com by adding a new entry to /etc/hosts if you are working on local environment
+
+run request-handler
+go to id.yourdomain.com/index.html to see the deployed project
+```
+
 ## FAQs
 
 - Why upload and deployment service are separated?
