@@ -14,6 +14,7 @@ This project is inspired by Vercel deployment process. It downloads projects fro
 
 - When user access project-name.gtaad.app, it will request the built version of the code from S3 and return to the user
 - It also caches the built version of the code for faster access
+- To test this locally, we can mock the something like `1234.vercel.com` to `localhost:3001` by adding a new entry to `/etc/hosts`
 
 ### The Queue
 
